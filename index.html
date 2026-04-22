@@ -1382,6 +1382,8 @@
       updateStats();
       renderRecentRoutes();
       if (session.role === 'admin') renderStaffTable();
+      // Rebuild mobile tab bar with correct role after login
+      if (typeof createMobileTabBar === 'function') createMobileTabBar();
     }
 
     // -- Initial boot --
