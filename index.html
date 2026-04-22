@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1E3A8A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Bajrang Express - Ticket Booking System</title>
   <meta name="description" content="Complete travel ticket booking, customer management, and marketing system for Bajrang Express." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,12 +41,15 @@
   <style>
     /* -- Base ---------------------------------------- */
     *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: #FAFAFA;
       color: #111827;
       margin: 0;
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
     }
 
     /* -- Custom scrollbar --------------------------- */
@@ -56,6 +62,15 @@
       outline: none;
       border-color: #3B82F6 !important;
       box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+
+    /* -- Touch-friendly inputs ----------------------- */
+    input, select, textarea, button {
+      -webkit-appearance: none;
+      touch-action: manipulation;
+    }
+    @media (max-width: 640px) {
+      input, select, textarea { font-size: 16px !important; } /* prevent iOS zoom on focus */
     }
 
     /* -- Dropdown ----------------------------------- */
@@ -328,15 +343,243 @@
 
     /* -- Smooth transitions on inputs --------------- */
     input, .dropdown-input, textarea {
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     /* -- Page transitions --------------------------- */
     .page { display: none; }
     .page.active { display: block; }
 
+    /* -- Reduced motion ------------------------------ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* -- Hardware acceleration ----------------------- */
+    .toast, .modal-overlay, .modal-box, .dropdown-list {
+      will-change: transform, opacity;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+
+    /* ================================================ */
+    /* MOBILE BOTTOM NAVIGATION                         */
+    /* ================================================ */
     @media (max-width: 768px) {
       .ticket-receipt { max-width: 100%; }
+
+      /* Bottom nav bar */
+      #tabBar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: #fff;
+        border-top: 1px solid #E5E7EB;
+        display: flex;
+        justify-content: space-around;
+        padding: 4px 0 env(safe-area-inset-bottom, 4px);
+        margin: 0;
+        gap: 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+        overflow-x: visible;
+      }
+      #tabBar .tab-btn {
+        flex-direction: column;
+        font-size: 10px;
+        padding: 6px 4px 4px;
+        gap: 2px;
+        flex: 1;
+        border-radius: 0;
+        min-height: 52px;
+        justify-content: center;
+      }
+      #tabBar .tab-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+      #tabBar .tab-btn.active {
+        background: transparent;
+        color: #1E3A8A;
+        position: relative;
+      }
+      #tabBar .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 25%;
+        right: 25%;
+        height: 2px;
+        background: #1E3A8A;
+        border-radius: 0 0 2px 2px;
+      }
+
+      /* Add body padding for bottom nav */
+      #appShell {
+        padding-bottom: 64px;
+      }
+
+      /* Hide desktop tab bar area spacing in header */
+      header .max-w-\[1100px\] {
+        padding-bottom: 0 !important;
+      }
+
+      /* Mobile header compact */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+      }
+
+      /* Stat cards mobile */
+      .stat-card {
+        padding: 12px 14px;
+        min-width: 0;
+        flex: 1 1 calc(33.33% - 8px);
+      }
+      .stat-card p:first-child {
+        font-size: 9px !important;
+      }
+      .stat-card p:last-child {
+        font-size: 18px !important;
+      }
+
+      /* Ticket form mobile - stack columns */
+      .page main {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        padding-top: 16px !important;
+      }
+
+      /* Buttons - larger tap targets */
+      .btn-primary, .btn-secondary, button {
+        min-height: 44px;
+      }
+
+      /* Toast mobile positioning */
+      .toast {
+        bottom: 72px;
+        left: 16px;
+        right: 16px;
+        transform: translateY(80px);
+      }
+
+      /* Modal mobile */
+      .modal-box {
+        max-width: 95%;
+        padding: 20px;
+        margin: 0 10px;
+      }
+
+      /* Login card mobile */
+      .login-card {
+        padding: 28px 20px;
+        margin: 0 12px;
+      }
+
+      /* Dropdown mobile - full width below input */
+      .dropdown-list {
+        max-height: 180px;
+      }
+
+      /* Table mobile - card layout */
+      .mobile-card-table thead { display: none; }
+      .mobile-card-table tbody tr {
+        display: block;
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+      }
+      .mobile-card-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0 !important;
+        border-bottom: none !important;
+        font-size: 13px;
+      }
+      .mobile-card-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        color: #6B7280;
+        font-size: 12px;
+        flex-shrink: 0;
+        margin-right: 12px;
+      }
+
+      /* Recent routes scrollable */
+      #recentRoutesList {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+      }
+      #recentRoutesList::-webkit-scrollbar { display: none; }
+
+      /* Form grid on mobile - single column for From/To */
+      #ticketForm .grid {
+        gap: 12px !important;
+      }
+
+      /* Ticket preview hide on mobile by default, show after form */
+      .ticket-preview-mobile-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        padding: 10px;
+        margin-top: 12px;
+        background: #F3F4F6;
+        border: 1px solid #E5E7EB;
+        border-radius: 6px;
+        color: #6B7280;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      /* Filters mobile stack */
+      #pageCustomers .flex-col.sm\:flex-row,
+      #pageReports .flex-col.sm\:flex-row {
+        gap: 8px !important;
+      }
+
+      /* Quick filter buttons wrap nicely */
+      .rpt-quick {
+        font-size: 12px !important;
+        padding: 5px 10px !important;
+      }
+
+      /* Staff page mobile - stack form and list */
+      #pageStaff .flex-col.md\:flex-row {
+        gap: 16px !important;
+      }
+    }
+
+    /* Small phone specific (< 375px) */
+    @media (max-width: 375px) {
+      .stat-card p:last-child {
+        font-size: 16px !important;
+      }
+      #tabBar .tab-btn {
+        font-size: 9px;
+        padding: 5px 2px 3px;
+      }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .max-w-\[1100px\] {
+        max-width: 95% !important;
+      }
     }
 
     /* -- Empty state -------------------------------- */
@@ -1346,7 +1589,7 @@
         const bookedStr = b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '\u2014';
         const checked = selectedIds.has(b._id) ? 'checked' : '';
         const bid = b._id || b.ticketId;
-        return `<tr data-id="${bid}"><td><input type="checkbox" class="cb row-cb" data-id="${bid}" ${checked} /></td><td class="font-medium text-txt">${esc(b.name)}</td><td class="text-secondary">${esc(b.phone)}</td><td><span class="text-txt">${esc(b.from)}</span> <span class="text-gray-400">\u2192</span> <span class="text-txt">${esc(b.to)}</span></td><td>${dateStr}</td><td class="font-medium">\u20B9${Number(b.price||0).toLocaleString('en-IN')}</td><td>${bookedStr}</td><td><button class="del-btn text-gray-400 hover:text-red-500 transition-colors p-1" data-id="${bid}" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td></tr>`;
+        return `<tr data-id="${bid}"><td data-label="" style="justify-content:flex-start"><input type="checkbox" class="cb row-cb" data-id="${bid}" ${checked} /></td><td data-label="Name" class="font-medium text-txt">${esc(b.name)}</td><td data-label="Phone" class="text-secondary">${esc(b.phone)}</td><td data-label="Route"><span class="text-txt">${esc(b.from)}</span> <span class="text-gray-400">\u2192</span> <span class="text-txt">${esc(b.to)}</span></td><td data-label="Date">${dateStr}</td><td data-label="Price" class="font-medium">\u20B9${Number(b.price||0).toLocaleString('en-IN')}</td><td data-label="Booked">${bookedStr}</td><td data-label="" style="justify-content:flex-end"><button class="del-btn text-gray-400 hover:text-red-500 transition-colors p-1" data-id="${bid}" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td></tr>`;
       }).join('');
 
       custBody.querySelectorAll('.row-cb').forEach(cb => { cb.addEventListener('change', () => { if (cb.checked) selectedIds.add(cb.dataset.id); else selectedIds.delete(cb.dataset.id); updateSelectedCount(); }); });
@@ -1432,7 +1675,7 @@
           rptEmpty.classList.add('hidden');
           rptBody.innerHTML = rptData.map(b => {
             const dateStr = b.travelDate ? new Date(b.travelDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '\u2014';
-            return `<tr><td class="font-medium text-txt">${esc(b.name)}</td><td class="text-secondary">${esc(b.phone)}</td><td><span class="text-txt">${esc(b.from)}</span> <span class="text-gray-400">\u2192</span> <span class="text-txt">${esc(b.to)}</span></td><td>${dateStr}</td><td class="font-medium">\u20B9${Number(b.price||0).toLocaleString('en-IN')}</td></tr>`;
+            return `<tr><td data-label="Name" class="font-medium text-txt">${esc(b.name)}</td><td data-label="Phone" class="text-secondary">${esc(b.phone)}</td><td data-label="Route"><span class="text-txt">${esc(b.from)}</span> <span class="text-gray-400">\u2192</span> <span class="text-txt">${esc(b.to)}</span></td><td data-label="Date">${dateStr}</td><td data-label="Amount" class="font-medium">\u20B9${Number(b.price||0).toLocaleString('en-IN')}</td></tr>`;
           }).join('');
         }
 
@@ -1557,10 +1800,29 @@
         staffCnt.textContent = `${staff.length} staff member${staff.length!==1?'s':''}`;
         if (!staff.length) { staffBody.innerHTML=''; staffEmpty.classList.remove('hidden'); return; }
         staffEmpty.classList.add('hidden');
-        staffBody.innerHTML = staff.map(s => `<tr><td class="font-medium text-txt">${esc(s.name)}</td><td class="text-secondary">${esc(s.email)}</td><td><span class="role-badge staff">Staff</span></td><td><button class="staff-del text-gray-400 transition-colors p-1" data-id="${s._id}" title="Delete staff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td></tr>`).join('');
+        staffBody.innerHTML = staff.map(s => `<tr><td data-label="Name" class="font-medium text-txt">${esc(s.name)}</td><td data-label="Email" class="text-secondary">${esc(s.email)}</td><td data-label="Role"><span class="role-badge staff">Staff</span></td><td data-label="" style="justify-content:flex-end"><button class="staff-del text-gray-400 transition-colors p-1" data-id="${s._id}" title="Delete staff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></td></tr>`).join('');
         staffBody.querySelectorAll('.staff-del').forEach(btn => { btn.addEventListener('click', async () => { if (confirm('Delete this staff account?')) { try { await api('/auth/staff/'+btn.dataset.id,{method:'DELETE'}); renderStaffTable(); showToast('Staff account deleted'); } catch(err) { showToast('Delete failed: '+err.message); } } }); });
       } catch { staffBody.innerHTML=''; staffEmpty.classList.remove('hidden'); }
     }
+
+    // ================================================
+    // MOBILE OPTIMIZATIONS
+    // ================================================
+    function setupMobileCardTables() {
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
+      ['custTable', 'rptTable', 'staffTable'].forEach(id => {
+        const table = document.getElementById(id);
+        if (table) {
+          if (isMobile) table.classList.add('mobile-card-table');
+          else table.classList.remove('mobile-card-table');
+        }
+      });
+    }
+    setupMobileCardTables();
+    window.addEventListener('resize', () => {
+      clearTimeout(window._resizeTimer);
+      window._resizeTimer = setTimeout(setupMobileCardTables, 150);
+    });
 
     updateStats();
   })();
